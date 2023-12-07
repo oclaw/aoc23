@@ -83,26 +83,22 @@ fn getCombinationValue(hand: []const u8, use_joker: bool) u8 {
 }
 
 fn getValueFromSortedFreqTable(freqtable: [5]freqTableEntry) u8 {
-    switch (freqtable[0].freq) {
-        5 => return 0, // five of a kind
-        4 => return 1, // four of a kind
+    return switch (freqtable[0].freq) {
+        5 => 0, // five of a kind
+        4 => 1, // four of a kind
 
-        3 => { // full house or three of a kind
-            switch (freqtable[1].freq) {
-                2 => return 2, // full house
-                else => return 3, // three of a kind
-            }
+        3 => switch (freqtable[1].freq) {
+            2 => 2, // full house
+            else => 3, // three of a kind
         },
 
-        2 => {
-            switch (freqtable[1].freq) {
-                2 => return 4, // two pairs
-                else => return 5, // one pair
-            }
+        2 => switch (freqtable[1].freq) {
+            2 => 4, // two pairs
+            else => 5, // one pair
         },
 
-        else => return 6, // high card
-    }
+        else => 6, // high card
+    };
 }
 
 const sortCtx = struct {
@@ -110,7 +106,7 @@ const sortCtx = struct {
     useJoker: bool,
 };
 
-fn compareCombinations(ctx: sortCtx, lhs: []const u8, rhs: []const u8) bool {
+fn compareCombinations(ctx: *const sortCtx, lhs: []const u8, rhs: []const u8) bool {
     var lhand = lhs[0..5];
     var rhand = rhs[0..5];
 
@@ -137,6 +133,7 @@ fn compareCombinations(ctx: sortCtx, lhs: []const u8, rhs: []const u8) bool {
 pub fn calcTotalWinnings(lines: [][]const u8) !usize {
     var result: usize = 0;
     for (lines, 0..) |line, rank| {
+        // extract number from string with content A2345 1111
         var splitRes = std.mem.indexOfScalar(u8, line, ' ');
         var value = try std.fmt.parseInt(usize, line[splitRes.? + 1 ..], 10);
         result += (rank + 1) * value;
@@ -155,11 +152,11 @@ pub fn main() !void {
     var lines = lineBuf[0..lineCount];
 
     const charMap = getCharMapForPart1();
-    std.sort.heap([]const u8, lines, sortCtx{ .charMap = charMap, .useJoker = false }, compareCombinations);
+    std.sort.heap([]const u8, lines, &sortCtx{ .charMap = charMap, .useJoker = false }, compareCombinations);
     var part1: usize = try calcTotalWinnings(lines);
 
     const charMap2 = getCharMapForPart2();
-    std.sort.heap([]const u8, lines, sortCtx{ .charMap = charMap2, .useJoker = true }, compareCombinations);
+    std.sort.heap([]const u8, lines, &sortCtx{ .charMap = charMap2, .useJoker = true }, compareCombinations);
     var part2: usize = try calcTotalWinnings(lines);
 
     std.debug.print("part1: {} part2: {}\n", .{ part1, part2 });
