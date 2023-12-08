@@ -1,0 +1,13 @@
+LR
+// corrected sample from https://adventofcode.com/ part 2
+// 1 is replaced to Q and 2 is replaced to F to fit selected encoding
+// there is no any real difference for result
+
+QQA = (QQB, XXX)
+QQB = (XXX, QQZ)
+QQZ = (QQB, XXX)
+FFA = (FFB, XXX)
+FFB = (FFC, FFC)
+FFC = (FFZ, FFZ)
+FFZ = (FFB, FFB)
+XXX = (XXX, XXX)
