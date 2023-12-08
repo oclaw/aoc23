@@ -29,14 +29,8 @@ const vertex = struct {
 
 // graph is stored as linear array with 15 bit code as index
 const graph = struct {
-    vertexes: [MaxCode]vertex,
+    vertexes: [MaxCode]vertex = std.mem.zeroes([MaxCode]vertex),
     bitmap: std.bit_set.StaticBitSet(MaxCode) = std.bit_set.StaticBitSet(MaxCode).initEmpty(),
-
-    pub fn init() graph {
-        var g = graph{ .vertexes = undefined };
-        @memset(&g.vertexes, std.mem.zeroes(vertex));
-        return g;
-    }
 
     pub fn set_vertex(self: *graph, code: usize, v: vertex) void {
         self.vertexes[code] = v;
@@ -91,15 +85,13 @@ fn solve_part2(g: *const graph, moves: []const u8) usize {
     var cur_buf = [_]usize{0} ** MaxCode;
     var steps_to_end_buf = [_]usize{0} ** MaxCode;
     var starts_count: usize = 0;
+
     for (0..g.vertexes.len) |i| {
-        if (!g.is_set(i)) {
+        if (!g.is_set(i) or !aux.is_start(i)) {
             continue;
         }
-
-        if (aux.is_start(i)) {
-            cur_buf[starts_count] = i;
-            starts_count += 1;
-        }
+        cur_buf[starts_count] = i;
+        starts_count += 1;
     }
 
     // find all paths and its lengths from start to end
@@ -137,7 +129,7 @@ const task = struct {
 };
 
 fn parse_task(data: []const u8) task {
-    var g = graph.init();
+    var g = graph{};
     var iter = std.mem.splitScalar(u8, data, '\n');
     var moves = iter.first();
     var count: usize = 0;
