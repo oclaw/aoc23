@@ -42,6 +42,7 @@ const graph = struct {
     }
 
     pub fn get_next(self: *const graph, source: usize, move: u8) usize {
+        assert(self.is_set(source));
         return switch (move) {
             'L' => self.vertexes[source].left,
             'R' => self.vertexes[source].right,
@@ -177,5 +178,5 @@ test "sample 3" {
 test "task" {
     var t = parse_task(taskData);
     try expect(try solve_part1(&t.graph, t.moves) == 16697);
-    try expect(solve_part2(&t.graph, t.moves) == 10668805667831);
+    try expect(solve_part2(&t.graph, t.moves) == 10_668_805_667_831);
 }
