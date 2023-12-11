@@ -1,11 +1,25 @@
 const std = @import("std");
 const assert = std.debug.assert;
 
-var sample = @embedFile("sample.txt");
-const sample_len = 6;
+const sample = .{
+    .data = @embedFile("sample.txt"),
+    .len = 6,
+};
 
-var data = @embedFile("task9.txt");
-const data_len = 21;
+const task = .{
+    .data = @embedFile("task9.txt"),
+    .len = 21,
+};
+
+// T is expected to be any integer type
+// overflow is not checked
+fn sum(comptime T: type, arr: []const T) T {
+    var res: T = 0;
+    for (arr) |elem| {
+        res += elem;
+    }
+    return res;
+}
 
 fn extrapolate_line(comptime size: usize, numbers: [size]i32) i32 {
     var temp = numbers;
@@ -22,11 +36,7 @@ fn extrapolate_line(comptime size: usize, numbers: [size]i32) i32 {
         temp = new;
     }
 
-    var extra: i32 = 0;
-    while (depth > 0) : (depth -= 1) {
-        extra = extra + prev[depth];
-    }
-    return extra + prev[0];
+    return sum(i32, prev[0..depth]);
 }
 
 fn extrapolate_line_reversed(comptime size: usize, numbers: [size]i32) i32 {
@@ -38,9 +48,9 @@ fn extrapolate_line_reversed(comptime size: usize, numbers: [size]i32) i32 {
 }
 
 pub fn main() !void {
-    const len = data_len;
+    const task_params = task;
 
-    var line_iter = std.mem.splitScalar(u8, data, '\n');
+    var line_iter = std.mem.splitScalar(u8, task_params.data, '\n');
     var numbuf = std.mem.zeroes([200][21]i32);
     var linecount: usize = 0;
     while (line_iter.next()) |line| {
@@ -58,8 +68,8 @@ pub fn main() !void {
     var res: i32 = 0;
     var res_reversed: i32 = 0;
     for (nums) |numline| {
-        res += extrapolate_line(len, numline[0..len].*);
-        res_reversed += extrapolate_line_reversed(len, numline[0..len].*);
+        res += extrapolate_line(task_params.len, numline[0..task_params.len].*);
+        res_reversed += extrapolate_line_reversed(task_params.len, numline[0..task_params.len].*);
     }
 
     std.debug.print("part 1: {} part 2: {}\n", .{ res, res_reversed });

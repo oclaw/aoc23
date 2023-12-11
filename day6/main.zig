@@ -40,7 +40,7 @@ fn countWinningCombinations(time: u64, min_dist: u64) u64 {
     var c = @as(i64, @intCast(min_dist));
     var d = b * b - 4 * c;
 
-    var x = (-b - std.math.sqrt(@as(u64, @intCast(d)))); // lefr root is enough
+    var x = (-b - std.math.sqrt(@as(u64, @intCast(d)))); // left root is enough
     x = @divFloor(x, 2);
 
     if (x * (-b - x) <= c) {

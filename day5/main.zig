@@ -109,17 +109,18 @@ pub fn main() !void {
 
         std.debug.print("non-monotonic range {}, try interpolation search\n", .{i});
 
-        var base: usize = rangeStart;
-        var baseLoc = loc1;
-        var cur: usize = base + 1;
-        var step: usize = 1;
-        var lastCalculatedLoc = baseLoc;
+        var base: usize = rangeStart; // position from which current search iteration started
+        var baseLoc = loc1; // location value of the base position
+        var cur: usize = base + 1; // current search position
+        var step: usize = 1; // interpolation step
+        var lastCalculatedLoc = baseLoc; // last calculated location value
+
         while (cur < rangeStart + rangeLen) {
             var loc = try task.processSeed(@as(u32, @intCast(cur)));
 
             var monotonic = loc > baseLoc and loc - baseLoc == cur - base;
             if (monotonic) {
-                step *= 2;
+                step *= 2; // interval is monotonic and does not contain global extremum, double the step and continue search
             } else {
                 if (step == 1 and loc < baseLoc) {
                     std.debug.print("found new local extremum at {} ({})\n", .{ cur, loc });
