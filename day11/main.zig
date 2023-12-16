@@ -78,11 +78,9 @@ fn findWaysLength(map: []const []const u8, expansion_coeff: usize) usize {
         }
     }
 
-    for (map[0], 0..) |col, i| {
-        _ = col;
+    for (0..map[0].len) |i| {
         var all_dots = true;
-        for (map, 0..) |row, j| {
-            _ = j;
+        for (map) |row| {
             if (row[i] != '.') {
                 all_dots = false;
                 break;
