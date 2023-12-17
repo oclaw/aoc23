@@ -10,26 +10,6 @@ const grid = struct {
     const _point = struct {
         x: usize,
         y: usize,
-
-        fn get_dir(self: _point, other: _point) _dir {
-            if (self.x == other.x and self.y == other.y) {
-                unreachable;
-            }
-
-            if (self.x == other.x) {
-                if (self.y > other.y) {
-                    return _dir.up;
-                } else {
-                    return _dir.down;
-                }
-            }
-
-            if (self.x > other.x) {
-                return _dir.left;
-            } else {
-                return _dir.right;
-            }
-        }
     };
 
     const _dir = enum(u32) {
@@ -70,7 +50,6 @@ const grid = struct {
                     return;
                 }
 
-                // var prev = point;
                 while (true) {
                     if (g.get_energy(point) & @intFromEnum(dir) > 0) {
                         return;
@@ -138,13 +117,6 @@ const grid = struct {
 
         aux.trace_beam(self, _start_point, _init_dir);
     }
-
-    // pub fn run_beam_and_and_reset(self: *grid, _start_point: _point, _init_dir: _dir) usize {
-    //     self.run_beam(_start_point, _init_dir);
-    //     var res = self.collect_energy();
-    //     self.reset_energy_map();
-    //     return res;
-    // }
 
     pub fn reset_energy_map(self: *grid) void {
         for (0..self.energy_map.len) |i| {
